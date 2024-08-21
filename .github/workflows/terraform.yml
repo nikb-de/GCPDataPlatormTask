@@ -22,25 +22,24 @@ jobs:
       - name: 'Setup Terraform'
         uses: hashicorp/setup-terraform@v3
 
-      - name: 'Configure GCP Credentials'
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: '${{secrets.GOOGLE_CREDENTIALS}}'
-
       - name: 'Initialize Terraform'
         run: terraform init
         env:
-          GOOGLE_CREDENTIALS: ${{secrets.GOOGLE_CREDENTIALS}}
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      # Checks that all Terraform configuration files adhere to a canonical format
+      - name: Terraform Format
+        run: terraform fmt -check
 
       - name: 'Plan Terraform'
         run: terraform plan -var="project-id=${{secrets.GCP_PROJECT_ID}}" -var="region=${{secrets.GCP_REGION}}"
         env:
-          GOOGLE_CREDENTIALS: ${{secrets.GOOGLE_CREDENTIALS}}
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: 'Apply Terraform'
         if: github.ref == 'refs/head/main'
         run: terraform apply -auto-approve -var="project-id=${{secrets.GCP_PROJECT_ID}}" -var="region=${{secrets.GCP_REGION}}"
         env:
-          GOOGLE_CREDENTIALS: ${{secrets.GOOGLE_CREDENTIALS}}
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
 
