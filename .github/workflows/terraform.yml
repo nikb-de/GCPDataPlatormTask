@@ -31,14 +31,14 @@ jobs:
 
       - name: 'Plan Terraform'
         run: terraform plan -var="project-id=${{secrets.GCP_PROJECT_ID}}" \
-                            -var="region=${{secrets.GCP_REGION}}
+                            -var="region=${{secrets.GCP_REGION}}"
         env:
           GOOGLE_CREDENTIALS: ${{secrets.GOOGLE_CREDENTIALS}}
 
       - name: 'Apply Terraform'
         if: github.ref == 'refs/head/main'
         run: terraform apply -auto-approve -var="project-id=${{secrets.GCP_PROJECT_ID}}" \
-                            -var="region=${{secrets.GCP_REGION}}
+                            -var="region=${{secrets.GCP_REGION}}"
         env:
           GOOGLE_CREDENTIALS: ${{secrets.GOOGLE_CREDENTIALS}}
 
