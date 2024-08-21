@@ -1,7 +1,6 @@
 provider "google" {
   project = var.project_id
-  region = var.region
-  credentials = var.credentials_file
+  region  = var.region
 }
 
 resource "google_pubsub_topic" "offer" {
