@@ -19,6 +19,14 @@ jobs:
       - name: 'Checkout Code'
         uses: actions/checkout@v4
 
+      - id: "auth"
+        name: "Authenticate to Google Cloud"
+        uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+          create_credentials_file: true
+          export_environment_variables: true
+
       - name: 'Setup Terraform'
         uses: hashicorp/setup-terraform@v3
 
