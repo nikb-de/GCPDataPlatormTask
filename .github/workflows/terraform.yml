@@ -41,7 +41,7 @@ jobs:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: 'Apply Terraform'
-        run: terraform apply -auto-approve -var="project-id=${{secrets.GCP_PROJECT_ID}}" -var="region=${{secrets.GCP_REGION}}"
+        run: terraform apply -auto-approve -var="project_id=${{secrets.GCP_PROJECT_ID}}" -var="region=${{secrets.GCP_REGION}}"
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
