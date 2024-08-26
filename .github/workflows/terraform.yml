@@ -36,7 +36,7 @@ jobs:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: 'Plan Terraform'
-        run: terraform plan -var="project-id=${{secrets.GCP_PROJECT_ID}}" -var="region=${{secrets.GCP_REGION}}"
+        run: terraform plan -var="project_id=${{secrets.GCP_PROJECT_ID}}" -var="region=${{secrets.GCP_REGION}}"
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
