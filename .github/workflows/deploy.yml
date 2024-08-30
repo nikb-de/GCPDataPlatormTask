@@ -7,6 +7,7 @@ on:
     paths:
       - 'cloud_functions/**'
       - 'tf/**'
+  workflow_dispatch:
 
 jobs:
   deploy:
