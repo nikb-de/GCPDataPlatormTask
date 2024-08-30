@@ -1,0 +1,77 @@
+name: Deploy Cloud Functions
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'cloud_functions/**'
+      - 'tf/**'
+
+jobs:
+  deploy:
+    name: Deploy Cloud Functions
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Setup Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        version: 'latest'
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+
+    - name: 'Setup Terraform'
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Setup Terraform
+      run: cd tf && terraform init
+
+    - name: Check for Ingest Function Changes
+      id: ingest_changes
+      run: |
+        if git diff --name-only HEAD^ HEAD | grep '^cloud_functions/ingest_function/'; then
+          echo "ingest_changed=true" >> $GITHUB_ENV
+        else
+          echo "ingest_changed=false" >> $GITHUB_ENV
+        fi
+
+    - name: Check for Convert Function Changes
+      id: convert_changes
+      run: |
+        if git diff --name-only HEAD^ HEAD | grep '^cloud_functions/convert_function/'; then
+          echo "convert_changed=true" >> $GITHUB_ENV
+        else
+          echo "convert_changed=false" >> $GITHUB_ENV
+        fi
+
+    - name: Terraform Plan
+      run: make terraform-plan
+      env:
+        GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        GCP_REGION: ${{ secrets.GCP_REGION }}
+
+    - name: Deploy Ingest Function
+      if: env.ingest_changed != 'false'
+      run: make deploy-ingest
+      env:
+        GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        GCP_REGION: ${{ secrets.GCP_REGION }}
+
+    - name: Deploy Convert Function
+      if: env.convert_changed != 'false'
+      run: make deploy-convert
+      env:
+        GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        GCP_REGION: ${{ secrets.GCP_REGION }}
+
+    - name: Deploy All Functions
+      if: env.ingest_changed != 'false' || env.convert_changed != 'false'
+      run: make deploy-all
+      env:
+        GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        GCP_REGION: ${{ secrets.GCP_REGION }}

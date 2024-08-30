@@ -3,10 +3,6 @@ provider "google" {
   region  = var.region
 }
 
-resource "google_pubsub_topic" "offer" {
-  name = "offer"
-}
-
 resource "google_pubsub_topic" "user_offers" {
   name = "user_offers"
 }
